@@ -1,0 +1,104 @@
+
+@(of: wrapper.OfferWrapper, bkng: wrapper.BookingWrapper, owner: User)
+ 
+@import util.db._
+@import util.data._
+@main("Confirmation") { 
+
+@searchbar(UserManager.getActiveUserAsWrapper())
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+		var myOptions = {
+          center: new google.maps.LatLng(@of.getBaseModel().latitude, @of.getBaseModel().longitude),
+          zoom: 15,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+  		var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+			
+  		var marker = new google.maps.Marker({
+			    position: new google.maps.LatLng(@of.getBaseModel().latitude, @of.getBaseModel().longitude),
+			    title:"@of.getBaseModel().name"
+			});
+			
+		// To add the marker to the map, call setMap();
+		marker.setMap(map); 		
+	}
+);
+</script>
+
+<script>	
+	$(function () {
+		$("#notiz").popover();  
+	});
+</script>
+
+<div class="container-fluid">
+
+	<div class="row-fluid">
+		<div class="span9">
+		
+			<div class="hero-unitSpecial">
+				<h1>Gut gemacht!</h1> <br>
+				<p class="lead">Vielen Dank fuer Deine Buchung. Deine Buchung im Überblick:</p>
+					<h2>Dein Produkt: <a href="@routes.OfferController.showOffer(of.getObjectId().toString())">@of.getBaseModel().name</a></h2> <br>
+					<div class="leadStyle" >Dein Gesamtpreis: @of.getBaseModel().getPriceFormatted(of.getBaseModel().calculateTotal(bkng, of.getBaseModel().priceph)) &euro;</div>
+					<div class="leadStyleSmall">(@of.getBaseModel().getPriceFormatted(of.getBaseModel().priceph) &euro; pro Tag)</div>
+					<div class="leadStyle">Datum: @DateUtil.parseDate(bkng.getBaseModel().bookingStart)</div>
+					<div class="leadStyleSmall">Dauer: @bkng.getBaseModel().duration Tag(e)</div>
+
+			</div>
+
+			<div class="row-fluid">
+
+				<div class="span3">
+
+					<address class="profile" style="margin-left: 50px">
+					<h3>Anbieter</h3>
+					Username: @owner.name<br />
+					@owner.firstname @owner.lastname<br />
+					@owner.street<br />
+					@owner.postalcode @owner.city<br />
+					<a href="mailto:@owner.email">@owner.email</a>
+					</address>
+					
+				</div>
+
+				<div class="span2">
+
+					<address class = "profile">
+						<h3>Abholort</h3>
+						@of.getBaseModel().street<br/>
+						@of.getBaseModel().postalCode @of.getBaseModel().city<br />
+					</address>
+
+					<a class="btn btn-large btn-info" href='@routes.UserController.newMessage?user=@owner.name&subject=@of.getBaseModel().name'>
+              			<i class="icon-pencil"></i><span name="locationfield"> Neue Nachricht</span>
+            		</a>
+
+				</div>
+
+				<div class="span7">
+					<div class"well" id="map_canvas" style="height:320px; margin-left: 40px;">
+					</div>
+				</div>
+
+			</div>
+		</div>
+	
+@sidebar()
+</div>
+		
+		<!--/span-->
+	</div>
+	<!--/row-->
+
+	<hr>
+
+	@footer()
+
+</div>
+<br class="clear" />		    
+}

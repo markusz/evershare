@@ -1,0 +1,117 @@
+
+@(searchForm: Form[forms.OfferSearch], userID: String, offers: models.helper.Page[wrapper.OfferWrapper])
+
+@import util.db._
+@import util.data._
+
+@main("Offers") {				
+@searchbar(UserManager.getActiveUserAsWrapper())
+
+@if(offers.getList().size() == 0) {
+        
+        <div class="well">
+            <em>Deine Suche liefert zum gewünschten Zeitraum und/oder im gewünschten Umkreis leider kein Ergebnis</em>
+        </div>
+        
+    } else {
+     @if(UserManager.getActiveUserAsWrapper().getBaseModel().loc == null || UserManager.getActiveUserAsWrapper().getBaseModel().loc.y == null || UserManager.getActiveUserAsWrapper().getBaseModel().loc.x == null){
+	  <div class="container-fluid warning" style="padding-bottom: 9px;">
+	<span class="label label-warning" style="font-size: 13px; font-weight: normal;">Du hast noch keine Adresse eingegeben. Du kannst evershare auch ohne Adresse nutzen, mit hast du aber mehr Spass. <a href="@routes.UserController.myProfile()">Jetzt Adresse eingeben </a></span>
+	  
+	  </div>
+	  }
+			
+	<div class="container-fluid">
+                  <div class="modal hide" id="myModal">
+					  <div class="modal-header">
+					    <button type="button" class="close" data-dismiss="modal">x</button>
+					    <h3>Neues Angebot</h3>
+					  </div>
+					  <div class="modal-body">
+						
+						<form class="form-horizontal">
+						  <fieldset>
+						    <div class="control-group">
+						      <label class="control-label" for="input01">Name des Angebots</label>
+						      <div class="controls">
+						        <input type="text" class="input-xlarge" id="input01">
+						        <p class="help-block">Bitte gib deinem Angebot einen aussagekräfitgen Namen.</p>
+						      </div>
+						    </div>
+						  </fieldset>
+						</form>
+					</div>
+					  <div class="modal-footer">
+					    <a href="#" class="btn btn-primary">Angebot einstellen</a>
+					  </div>
+				</div>
+      <div class="row-fluid">
+        <div class="span10">
+        
+        <ul class="thumbnails">
+        
+        @for(i <- 0 to 3) {
+	        @if(offers.getList.size() > i){
+	        
+	        <li class="span3">
+					<a href="@routes.OfferController.showOffer(offers.getList.get(i).getBaseModel().refererId)" class="thumbnail-v2">
+					<div class="badge-offer badge-info-v2 leadStyleBadge-title">@offers.getList.get(i).getBaseModel().name</div>
+					<div class="thumbnail-image"><img src="@routes.Assets.at(offers.getList.get(i).getBaseModel().getImgThumbnailUrl())" alt=""></div>
+					<div class="badge-offer badge-info-v2 leadStyleBadge-price-v2 " style="-webkit-border-radius: 0px 0px 5px 5px;">@CurrencyUtil.getPriceFormatted(offers.getList.get(i).getBaseModel().priceph) &euro; / Tag</div>
+					</a>
+				</li>
+	        }   
+        }
+
+	
+		</ul>
+		
+		       <ul class="thumbnails">
+			 @for(i <- 4 to 7) {
+	        @if(offers.getList.size() > i){
+	        
+	        <li class="span3">
+	        
+
+					<a href="@routes.OfferController.showOffer(offers.getList.get(i).getBaseModel().refererId)" class="thumbnail-v2">
+					<div class="badge-offer badge-info-v2 leadStyleBadge-title">@offers.getList.get(i).getBaseModel().name</div>
+					<div class="thumbnail-image"><img src="@routes.Assets.at(offers.getList.get(i).getBaseModel().getImgThumbnailUrl())" alt=""></div>
+					<div class="badge-offer badge-info-v2 leadStyleBadge-price-v2" style="-webkit-border-radius: 0px 0px 5px 5px;">@CurrencyUtil.getPriceFormatted(offers.getList.get(i).getBaseModel().priceph) &euro; / Tag</div>
+					</a>
+				</li>
+	        }   
+        }
+        
+		</ul>
+		
+		
+
+	   
+         </div><!--/span-->
+             @sidebar()
+      </div><!--/row-->
+      
+              <div class="pagination">
+  @if(offers.getTotalPageCount() > 1) {
+  <ul>
+  	@if(offers.hasPrev) {
+    <li><a href="@routes.Application.startPaginate(offers.getCurrentPage - 1)">Vorherige Seite</a></li>
+    }
+    @for(j <- 1 to  offers.getTotalPageCount()){
+    <li @if(j == offers.getPageIndex()){class="active"}>
+      <a href="@routes.Application.startPaginate(j)">@(j)</a>
+    </li>}
+      @if(offers.hasNext) {
+    <li><a href="@routes.Application.startPaginate(offers.getCurrentPage + 1)">Nächste Seite</a></li>
+    }
+  </ul>
+  }
+    </div>
+    <hr>
+  	@footer()		
+		   </div>
+		   <br class="clear" />		
+		}
+
+    
+}

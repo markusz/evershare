@@ -1,0 +1,138 @@
+@(which: String, facebookLogin: Form[forms.FacebookLogin])
+
+@import util.db._
+
+@if(session.get("userID") != null) {	
+
+  
+  @main("Evershare - " + which) {
+	
+	@searchbar(UserManager.getActiveUserAsWrapper())
+	
+	<div class="container-fluid">
+	<div class="row-fluid">
+	<div class="span9">
+	  <div class="well">
+	  	@if(which == "Kontakt") {
+		  @boden.kontakt()
+		} else {@if(which == "Impressum") {
+		  @boden.impressum()
+		} else {@if(which == "Wer sind wir?") {
+		  @boden.werSindWir()
+		} else {@if(which == "Hilfe") {
+		  @boden.hilfe()
+		} else {@if(which == "Datenschutz") {
+		  @boden.datenschutz()
+		}}}}}
+	  </div>
+	</div>
+
+	@if(session.get("userID") != null) {
+	  @sidebar()
+    }
+	</div>
+
+	<hr>
+  	@footer()
+	</div>		
+	<br class="clear" />
+  }
+} else {
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+	<title>Evershare - @which</title>
+	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("css/styles.css")" />
+	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("css/animate.css")" />
+	<script src="@routes.Assets.at("js/jquery-1.7.1.min.js")" type="text/javascript"></script>
+
+			<script type="text/javascript">
+				function View() {
+				  document.getElementById("containerL").style.display = "block";
+				  document.getElementById("stylized").style.display = "none";
+				  document.getElementById("welcome").style.display = "block";
+				 } 
+				 
+				 function Hide() {
+				  document.getElementById("containerL").style.display = "none";
+				  document.getElementById("stylized").style.display = "block";
+				  document.getElementById("welcome").style.display = "none";
+				 }
+			</script>
+				<script type="text/javascript">
+				function Viewreg() {
+				  document.getElementById("containerR").style.display = "block";
+				  document.getElementById("stylized").style.display = "none";
+				 } 
+				 
+				 function Hidereg() {
+				  document.getElementById("containerR").style.display = "none";
+				  document.getElementById("stylized").style.display = "block";
+				 }
+			</script>
+
+  </head> 
+  <body>
+
+	@socialpluginsfragment(facebookLogin)
+	
+	<div class="container">
+	  <div class="header">	
+		<a href="@routes.Application.index">
+		  <img src="@routes.Assets.at("img/Evershare Logo.png")" width="150" alt="Logo" />
+		</a>
+		<div class="get-it-buttons">  
+		  <img name="fbImage" src="@routes.Assets.at("img/Facebook.png")" width="33" height="32" alt="facebook" onClick="login()" onMouseOver="fbImage.src='@routes.Assets.at("img/Facebook_hover.png")'" onMouseOut="fbImage.src='@routes.Assets.at("img/Facebook.png")'"/>
+		  <img name="twitterImage" src="@routes.Assets.at("img/Twitter.png")" width="33" height="33" alt="twitter" onMouseOver="twitterImage.src='@routes.Assets.at("img/Twitter_hover.png")'" onMouseOut="twitterImage.src='@routes.Assets.at("img/Twitter.png")'"/>
+		  <img src="@routes.Assets.at("img/Share-This.png")" width="33" height="33" alt="share" />    
+		  <a href="#" class="login-button" onClick="View();">LOGIN</a>
+		</div>
+	  </div>
+
+	  @if(flash.contains("message")) {
+		<H3>@flash.get("message")</H3>
+	  }
+	  <div class="slider-wrapper theme-default mask-container-large">
+	    <div class="row">
+		  <div class="span9">
+			@if(which == "Kontakt") {
+			  @boden.kontakt()
+			} else {@if(which == "Impressum") {
+		  	  @boden.impressum()
+			} else {@if(which == "Wer sind wir?") {
+		      @boden.werSindWir()
+			} else {@if(which == "Hilfe") {
+			  @boden.hilfe()
+			} else {@if(which == "Datenschutz") {
+			  @boden.datenschutz()
+			}}}}}
+		</div>
+	  </div>
+	  </div>
+      <div id="containerL" style="display: none;">
+		@helper.form(routes.UserController.login, 'class -> "formL", 'method -> "POST") {										
+		  <labelL for="name">Benutzername:</labelL>						
+		  <input name="name" type="name">						
+		  <labelL for="pw">Passwort:</labelL>						
+		  <p>
+			<a href="#">Passwort vergessen?</a>						
+			<input name="pw" type="password">
+		  </p>						
+		  <div id="lower">					
+			<input type="checkbox" name="rememberme"><label class="check" for="checkbox">Eingeloggt bleiben?</label>						
+			<input type="submit" value="Login">
+			<input  type="button" value="Zur&uuml;ck" onClick="Hide();">				
+		  </div>
+		}
+	  </div>
+
+	  <br class="clear" />
+				
+	  <hr />
+	  @footer()
+	  <div class="fb-like" data-href="http://test.evershare.de" data-send="false" data-width="450" data-show-faces="true" data-font="lucida grande"></div>
+	</div>
+  </body>
+</html>
+}

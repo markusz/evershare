@@ -1,0 +1,179 @@
+@(user: wrapper.UserWrapper)
+
+@import util.db._
+
+<script type="text/javascript">
+  
+  $(document).ready(function() {
+	  
+	// Init dialog that executes address picking
+	$("#otherAddressDialog").dialog( {
+	  autoOpen:	false,
+	  buttons: [{
+		  text: "Adresse übernehmen",
+		  click: function() {
+			$('#searchAddress').text($('#addresspicker').val());
+			$(this).dialog("close");
+			}
+	  }],
+	  closeOnEscape: true,
+	  modal: true
+	});	  
+	  
+	$('[name=date]').val('01.01.1970'); // Setting no date leads to parse error
+	  
+	// Init addresspicker and tell him to edit lat and lng input fields
+	$("#addresspicker").addresspicker({
+		elements: {
+			lat:	"#lat",
+			lng:	"#lng"
+		}
+	});
+	
+	var today =  $.datepicker.formatDate('dd.mm.yy', new Date());
+	$('[name=datepicker]').datepicker({showAnim: "bounce", minDate: 0, monthNames: ['Januar','Februar','M�rz','April','Mai','Juni',
+	               	                                                             'Juli','August','September','Oktober','November','Dezember'], dayNamesMin: ['So','Mo','Di','Mi','Do','Fr','Sa'], firstDay: 1, dateFormat: "dd.mm.yy", onSelect: function(ev){
+	  $('[name=date]').val($('[name=datepicker]').val());
+	  $("[name=timefield]").html($('[name=datepicker]').val());
+	  }
+	});
+  });
+
+  function setRange(range, caller) {
+	$("input[name=range]").val(range); // Set range in input in form
+	$("[name=locationfield]").html(" "+range+" km"); // Update 'Ort' button with proper label
+	$(".range").removeClass("active"); // Remove hightling from all ranges
+	$(caller).parent().addClass("active"); // Set highlighting of caller
+  }
+  
+  function setAddress(addressAsText) {
+	$('#searchAddress').text(addressAsText);
+  }
+  
+  function setDate(date, caller){
+	var today = new Date();
+	var tomorrow = new Date();
+	tomorrow.setDate(tomorrow.getDate()+1);
+	
+	if(date == 1) {
+		$('[name=date]').val($.datepicker.formatDate('dd.mm.yy', today));
+		$("[name=timefield]").html($.datepicker.formatDate('dd.mm.yy', today));
+	} else {
+		if(date == 2){
+			$('[name=date]').val($.datepicker.formatDate('dd.mm.yy', tomorrow));
+			$("[name=timefield]").html($.datepicker.formatDate('dd.mm.yy', tomorrow));
+		} else {
+			$('[name=date]').val($('[name=datepicker]').val());
+			$("[name=timefield]").html($('[name=datepicker]').val());
+		}
+	}
+	
+	$(caller).parent().parent().children().not("[class=divider]").attr("class", "")
+	$(caller).parent().attr("class", "active")
+  }  
+	
+  $(function() { 
+	$("#angebotover").popover({placement:'bottom'});  
+  });  
+	
+</script>
+
+@helper.form(routes.OfferController.search, 'class -> "navbar-search pull-left") {
+  <input type="hidden" id="lat" name="lat" value='@user.getBaseModel().loc.y' onchange=""/>
+  <input type="hidden" id="lng" name="lng" value='@user.getBaseModel().loc.x' onchange=""/>
+  <input type="hidden" name="range" value="-1"/>
+  <input type="hidden" name="date" value=""/>
+  
+
+  <div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+	  <div class="container-fluid">
+
+		<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"></a>
+		<a class="brand" href="@routes.Application.start">
+		  <img src="@routes.Assets.at("img/elogo.png")" height="28px" alt="">
+		</a>
+		
+		<div class="btn-group pull-right">
+		  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			<i class="icon-user"></i>
+				
+				@if(MessageManager.getNumberOfUnreadReceivedMessages() > 0){
+				<span class="badge badge-important badgeM">@MessageManager.getNumberOfUnreadReceivedMessages()</span>
+				}
+			@user.getBaseModel().name
+			<span class="caret"></span>
+		  </a>
+            
+		  <ul class="dropdown-menu">
+			<li><a href='@routes.UserController.myProfile'><span>Mein Profil</span></a></li>
+			<li><a href='@routes.UserController.listMyOffers'><span>Meine Angebote</span></a></li> 
+			<li><a href='@routes.UserController.listMyBookings'><span>Meine Buchungen</span></a></li>
+			<li><a href='@routes.UserController.showMessenger'><span>Meine Nachrichten</span></a></li>
+			<li class="divider"></li>
+			<li><a href="@routes.UserController.logout"><span>Logout</span></a></li>
+		  </ul>
+		</div>
+
+		<div class="btn-group pull-right">
+		  <a href='@routes.OfferController.createOfferPage' id="angebotover" class="btn pull-right btn-success" rel="popover" data-content="Du hast auch etwas zum vermieten? Dann stell es doch jetzt ein, damit es ein anderer in Zukunft mieten kann!" data-original-title="Neues Angebot erstellen">
+			<i class="icon-plus icon-white"></i> Neues Angebot
+		  </a>
+		</div>
+          
+		<div class="btn-group pull-left">
+		  <input type="text" name="term" class="search-query pull-left" placeholder="Suche">    
+		</div>
+	    
+	    <div id="otherAddressDialog" title="Suchadresse ändern">
+  		  <p>Bitte gebe hier die Adresse ein, von welcher die Umkreissuche ausgehen soll</p>
+  		  <input id="addresspicker" />
+		</div>
+	      
+		<div class="btn-group pull-left">
+		  <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+			<i class="icon-globe icon-white"></i><span name="locationfield"> Ort</span>
+			<span class="caret"></span>
+		  </a>
+		  <ul class="dropdown-menu">
+			
+			  <li class="active">
+			    <a id="searchAddress" href="#">@user.getBaseModel().street, @user.getBaseModel().postalcode @user.getBaseModel().city</a>
+			  </li>
+              <li><a onclick="$('#otherAddressDialog').dialog('open')">Andere Adresse</a></li>
+              <li class="divider"></li>
+              <li class="range"><a onclick="setRange(1, $(this))" href="#">1km Umkreis</a></li>
+              <li class="range"><a onclick="setRange(2, $(this))" href="#">2km Umkreis</a></li>
+              <li class="range"><a onclick="setRange(5, $(this))"  href="#">5km Umkreis</a></li>
+              <li class="range"><a onclick="setRange(10, $(this))" href="#">10km Umkreis</a></li>
+              <li class="range"><a onclick="setRange(20, $(this))" href="#">20km Umkreis</a></li>
+              <li class="range"><a onclick="setRange(50, $(this))" href="#">50km Umkreis</a></li>
+              <li class="range"><a onclick="setRange(1000, $(this))" href="#">1000km Umkreis</a></li>
+              <!-- <li class="active"><input id="customkmrange" type="text" name="t"></li>-->
+		  </ul>
+		</div>
+          
+		<div class="btn-group pull-left">
+		  <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+		  	<i class="icon-calendar icon-white"></i> <span name="timefield"> Zeit</span>
+		  	<span class="caret"></span>
+		  </a>
+		  <ul class="dropdown-menu">
+			<li class="active">
+			  <a onclick="setDate(1, $(this))" href="#">Heute</a>
+			</li>
+			<li><a onclick="setDate(2, $(this))" href="#">Morgen</a></li>
+			<li class="divider"></li>
+			<li><input placeholder="Anderes Datum" style="border: 0px; padding-left: 15px;" name="datepicker" type="text"/></li>
+		  </ul>
+		</div>
+          
+		<div class="btn-group pull-left">
+		  <button onClick="$('[name=datepicker]').remove()" class="btn btn-info"><i class="icon-search icon-white"></i><span>Suchen</span></button>
+        </div>
+	  </div>
+	  
+	 
+	</div>
+  </div>
+}

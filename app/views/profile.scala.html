@@ -1,0 +1,220 @@
+
+@(u: wrapper.UserWrapper, facebookLogin: Form[forms.FacebookLogin])
+
+@import helper._
+@main("UserProfile") {
+
+
+@socialpluginsfragment(facebookLogin)
+
+	@searchbar(u)
+
+	<script type="text/javascript">
+	
+function toggleEdit(editMode){
+	if(editMode){
+		
+	$("#userInfoInput").show("slow")
+	$("#userInfoDisplay").hide("slow")
+	$("#map_canvas").hide()
+	}
+	else{
+		$("#userInfoInput").hide("slow")
+		$("#userInfoDisplay").show("slow")
+		$("#map_canvas").show()
+	}
+	
+	
+	
+}
+	
+	
+	$(document).ready(function() {
+		
+		$("#userInfoInput").hide()
+			@if(u.getBaseModel().loc.y != null & u.getBaseModel().loc.x != null){
+			var myOptions = {
+	          center: new google.maps.LatLng(@u.getBaseModel().loc.y, @u.getBaseModel().loc.x),
+	          zoom: 15,
+	          mapTypeId: google.maps.MapTypeId.ROADMAP
+	        };
+	        
+	  		var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+				
+	  		var marker = new google.maps.Marker({
+				    position: new google.maps.LatLng(@u.getBaseModel().loc.y, @u.getBaseModel().loc.x),
+				    title:"@u.getBaseModel().name"
+				});
+				
+			// To add the marker to the map, call setMap();
+			marker.setMap(map); 
+			}
+		}
+	);
+	
+	
+</script>
+
+ 	<div class="container-fluid">
+ 		<div class="row-fluid"> 
+ 				<div class = "page-header profileHead">
+ 					<h1>@u.getBaseModel().firstname @u.getBaseModel().lastname</h1>
+ 				</div>
+	
+				<div class="span2">
+ 
+ 					@helper.form(action = routes.UserController.updateProfileImage, args = 'method -> "POST", 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
+
+						 <div class="fileupload fileupload-new" data-provides="fileupload">
+					  	@if(u.getBaseModel().getImgThumbnailUrl().contains("default.jpg")){
+		    				 <div class="fileupload-new thumbnail" style="width: 150px; height: 150px;padding: 4px; line-height: 20px; border: 1px solid #ddd;background-color: #ffffff;"><img src="http://www.placehold.it/150x150/EFEFEF/AAAAAA&text=no+image" /></div>
+			   			}else{
+							<div class="fileupload-new thumbnail" style="width: 100%;padding: 4px; line-height: 20px; border: 1px solid #ddd;background-color: #ffffff;"><img src="@routes.Assets.at(u.getBaseModel().getImgThumbnailUrl())" /></div>
+			   			}
+					  			<div class="fileupload-preview fileupload-exists thumbnail" style="width: 100%;padding: 4px; line-height: 20px; border: 1px solid #ddd;background-color: #ffffff;" line-height: 20px;"></div>
+					  	<div>
+					    
+					    <span class="btn btn-file"><span class="fileupload-new">Bild auswählen</span><span class="fileupload-exists">Ändern</span><input id="avatar" type="file" name="avatar" /></span>
+					    <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Löschen</a> 
+					   
+					  </div>
+					</div>
+					    
+					<button class="btn btn-info" onclick="$(this).parents('form').submit();" type="button">Profilbild aktualisieren</button>
+				
+				}
+ 				</div>
+ 
+ 				<div class="span3">
+ 				<div id="userInfoDisplay">
+ 						<p class="profile"> <strong>@u.getBaseModel().name </strong>
+ 						
+ 						
+ 						@if(u.getBaseModel().facebookId == null || u.getBaseModel().facebookId == "" ) {
+ 								<img src="@routes.Assets.at("img/f_logo.png")" onClick="login()" alt="" width="28px" class="facebook-settings-icon-inactive">
+ 					  		} else {
+ 					  			<img src="@routes.Assets.at("img/f_logo.png")" onclick='location.href="@routes.UserController.fbunlink()"' alt="" width="28px" class="facebook-settings-icon-active">
+ 					  		}
+ 						<button class="btn btn-success" onclick="toggleEdit(true)" style="float: right; padding: 4px 6px 4px;"><i class="icon-pencil icon-white"></i>
+ 				 			<a class="buttonProfile"></a>
+ 				 		</button>
+ 						
+ 						<br>
+ 											<a href="mailto:@u.getBaseModel().email">@u.getBaseModel().email</a>
+ 						</p>
+ 						<p class="profile">@u.getBaseModel().firstname @u.getBaseModel().lastname
+ 						</p>
+ 						
+ 						<p class="profile"><strong>Adresse:</strong></p>
+ 						<address class="profile">
+ 							@u.getBaseModel().street <br>
+ 							@u.getBaseModel().postalcode @u.getBaseModel().city <br>
+ 						</address>
+ 						<br>
+	
+ 				 		<p>
+ 				 		
+ 				 		<br>
+ 				 		
+ 				 	</p>
+ 				</div>
+ 				<div id="userInfoInput">
+ 				
+ 				
+
+
+
+
+
+
+@helper.form(action = routes.UserController.updateProfile, args = 'method -> "POST", 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
+
+					<fieldset>
+							<p><h3>Persönliches</h3></p>
+							
+							
+							<div class="control-group">  
+								<label class="control-label-align-left" for="streetInput"><i class="icon-envelope"></i> Email</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="email" type="text" name="email" value="@u.getBaseModel().email">  
+								</div>  
+							</div>
+							
+							<div class="control-group">  
+								<label class="control-label-align-left" for="streetInput"><i class="icon-user"></i> Vorname</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="firstname" type="text" name="firstname" value="@u.getBaseModel().firstname"> 
+								</div>  
+							</div>
+							
+							<div class="control-group">  
+								<label class="control-label-align-left" for="streetInput"><i class="icon-user"></i> Nachname</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="lastname" type="text" name="lastname" value="@u.getBaseModel().lastname">  
+								</div>  
+							</div>
+							
+							<p><h3>Adresse</h3></p>
+							
+							<div class="control-group">  
+								<label class="control-label-align-left" for="streetInput"><i class="icon-road"></i> Strasse</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="streetInput" type="text" value="@u.getBaseModel().street" name="street">  
+								</div>  
+							</div>
+							
+							<div class="control-group">  
+								<label class="control-label-align-left" for="plzInput"><i class="icon-home"></i> Postleitzahl</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="plzInput" type="text" value="@u.getBaseModel().postalcode" name="postalCode">  
+								</div>  
+							</div>
+							
+							<div class="control-group">  
+								<label class="control-label-align-left" for="cityInput"><i class="icon-globe"></i> Ort</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="cityInput" type="text" value="@u.getBaseModel().city" name="city">  
+								</div>  
+							</div>
+							
+							
+							
+							<a class="btn" onclick="toggleEdit(false)"> Abbrechen </a>
+							<a onclick="$(this).parents('form').submit();" class="btn btn-primary"> Speichern </a>
+							
+					</fieldset>
+				} 				
+ 				
+ 				
+ 				
+ 				
+ 				
+ 				
+ 				
+ 				
+ 				
+ 				</div>
+
+ 					 	
+ 				</div>
+ 				@if(u.getBaseModel().loc.y != null & u.getBaseModel().loc.x != null){
+ 				
+				<div class="span5">
+					<div class"well" id="map_canvas" style="width:580px; height:340px"></div>
+ 				</div>
+ 				}else{
+ 				
+ 				
+ 				}
+ 
+ 	
+ 		</div>
+ 
+ 		<hr>
+ 		@footer()
+ 
+ 	</div>
+ 	<br class="clear" />	
+
+}
+

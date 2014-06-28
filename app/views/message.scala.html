@@ -1,0 +1,68 @@
+@(message: Form[Message], userName : String, subjectText : String)
+
+@import util.db._
+
+@main("Message") { 
+ 
+
+@searchbar(UserManager.getActiveUserAsWrapper())
+
+</script>
+
+<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span9">
+					<div class= "mwell">
+
+						<h1 style="margin-bottom: 15px"> Neue Nachricht</h1>
+
+						<a class="btn btn-success" href='@routes.UserController.showMessenger'>
+              			<i class="icon-arrow-left"></i><span name="locationfield"> Zur Übersicht</span>
+            			</a>
+
+
+						<hr>
+
+						<div class ="row-fluid"> 	
+						
+							@helper.form(action = routes.MessageController.sendMessage, args = 'method -> "POST", 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
+				
+
+				 			<div class="span8">
+				 			
+				 				<div class="input-prepend">
+								  <span class="add-on" style ="width: 50px">An</span>
+								  <input size="50" class="span8" id="uname" name="recName" type="text" placeholder="Benutzername" value="@userName"/>
+								  
+
+						
+            			
+								</div>
+								<br>
+								<div class="input-prepend">
+								  <span class="add-on" style ="width: 50px">Betreff</span>
+								  <input size="50" class="span8" id="title" name="title" type="text" placeholder="Titel" value="@subjectText" />
+								
+								</div>
+							
+								<textarea id="message" name="message" class="span8" rows="7"></textarea>
+								<button type="submit" class="btn">Senden</button>
+							</div>
+							}
+	 					</div>
+
+					</div>
+
+		 			
+			</div>
+
+			@sidebar()
+
+		</div>
+
+	<hr>
+	@footer()
+
+</div>
+<br class="clear" />		    
+}

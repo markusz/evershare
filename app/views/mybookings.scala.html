@@ -1,0 +1,46 @@
+@(bookings : List[minimummodels.BookingMinimumModel])
+
+@import util.db._
+
+@main("My Bookings") {
+
+  @searchbar(UserManager.getActiveUserAsWrapper())
+
+  <div class="container-fluid">
+	<div class="row-fluid">
+	  <div class="span9">
+		<div class= "mwell">
+
+		  <h1 style="margin-bottom: 15px"> Deine Buchungen</h1>
+		  <a class="btn btn-success" href='@routes.Application.start'>
+			<i class="icon-arrow-left"></i><span name="locationfield"> Startseite</span>
+		  </a>
+
+		  <hr>
+
+		  <div class ="row-fluid"> 
+			<div class="span5 brr">
+			  <ul class="nav nav-list">
+				<li class="nav-header">Zukünftig</li>
+				@for(booking <- bookings) {
+				  <li>Booking @booking.wrapperId : @booking.offerName 
+					<i class="icon-chevron-right"></i>
+				  </li>
+				}
+			  </ul>
+			</div>
+		  </div>
+
+		</div>
+	  </div>
+
+	  @sidebar()
+
+	</div>
+
+	<hr>
+	@footer()
+
+  </div>
+  <br class="clear" />		    
+}

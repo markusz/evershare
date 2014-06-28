@@ -1,0 +1,453 @@
+@(of: wrapper.OfferWrapper, otherOffers: List[wrapper.OfferWrapper], relatedOffers: List[wrapper.OfferWrapper], bkng: Form[Booking], busy: List[models.helper.EasyDate], usr: wrapper.UserWrapper)
+
+@import util.db._
+@import util.data._
+
+@main("Offer") {
+  
+<script type="text/javascript">
+
+Busy = new Array(@for(busyDate <- busy) {new Array(@busyDate.day, @busyDate.month, @busyDate.year), } false);
+
+var pricepd = @of.getBaseModel().priceph
+
+console.log("asdf")
+
+$(document).ready(function() {
+	
+	
+	$("#rentNowErrorMsg").hide()
+	
+	/*$('#calendar').calendarWidget({             
+		});
+	
+	for (j=0;j<42;j++){
+		$('#calendar').setDay(j, Busy[j])
+	}*/
+	
+	var myOptions = {
+      center: new google.maps.LatLng(@of.getBaseModel().loc.y, @of.getBaseModel().loc.x),
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+        
+  	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+		
+  	var marker = new google.maps.Marker({
+	  position: new google.maps.LatLng(@of.getBaseModel().loc.y, @of.getBaseModel().loc.x),
+	  title:'@of.getBaseModel().name'
+	});
+			
+	// To add the marker to the map, call setMap();
+	marker.setMap(map);
+		
+	$('#cal').datepicker({beforeShowDay: highlight,  monthNames: ['Januar','Februar','März','April','Mai','Juni',
+	                                                             'Juli','August','September','Oktober','November','Dezember'], dayNamesMin: ['So','Mo','Di','Mi','Do','Fr','Sa'], firstDay: 1, minDate: 0, dateFormat: "dd.mm.yy", onSelect: function(dateText, inst) {
+		$('[name=selecteddate]').val(dateText)
+		checkInputValidity($.datepicker.parseDate('dd.mm.yy', dateText))
+	  }
+	});	
+  }
+);
+
+function updateTotal(){
+	checkInputValidity($.datepicker.parseDate('dd.mm.yy', $('#cal').val()))
+	$('#totalPrice').html((pricepd * $('#dur').val()).toFixed(2))
+}
+
+function highlight(date) {
+	
+	$('#cal2').val($('#cal').val());
+	$('#dur2').val($('#dur').val());
+	
+	for (var i=0,len=Busy.length; i<len; i++){
+		
+	    if (isBooked(date, Busy[i])) {
+	    	//alert("booked");
+	        return [true, 'dayNotAvailable', ""];
+	    }
+	}
+
+	return [true, 'dayAvailable', ""];
+}
+
+function checkInputValidity(date){
+	
+	if(dateBooked(date) || durationOverlapsWithBookedSpan(date)){
+		$("#rentNowButton").hide()
+		$("#rentNowErrorMsg").show()
+	}
+	else{
+		$("#rentNowButton").show()
+		$("#rentNowErrorMsg").hide()
+	}
+}
+
+function durationOverlapsWithBookedSpan(date){
+	
+	var days = $("#dur").val();
+	
+	if(isNaN(parseInt(days))){
+		
+		days=1
+		
+		$("#rentNowButton").hide()
+		$("#rentNowErrorMsg").show()
+		
+	}
+	
+	
+	for(var i = 1; i < days; i++){
+		 date.setDate(date.getDate() + 1);
+		 
+		 if(dateBooked(date)){
+			 return true
+		 }
+	}
+	
+	return false;
+}
+
+function checkInputValidityString(date){
+	console.log("Test"+date)
+	
+	var n=date.split(".");
+	
+	if(dateBookedString(n)){
+		console.log("ausblenden "+date)
+	}
+}
+
+function dateBooked(date){
+	
+for (var i=0,len=Busy.length; i<len; i++){
+		
+	    if (isBooked(date, Busy[i])) {
+	    	//alert("booked");
+	        return true
+	    }
+	}
+
+	return false
+	
+}
+
+function dateBookedString(date){
+	
+	for (var i=0,len=Busy.length; i<len; i++){
+			
+		    if (isBookedString(date, Busy[i])) {
+		    	//alert("booked");
+		        return true
+		    }
+		}
+
+		return false
+		
+	}
+
+function isBooked(date, easyDate){
+	
+	//console.log("Kalenderdate: "+date.getDate()+"."+date.getMonth()+"."+date.getFullYear()+ " <-> EasyDate: "+easyDate[0]+"."+easyDate[1]+"."+easyDate[2])
+	
+	if(date.getDate() == easyDate[0] && date.getMonth() == easyDate[1] && date.getFullYear() == easyDate[2]){
+		return true
+	}
+	
+	return false;
+	
+}
+
+function isBookedString(date, easyDate){
+	
+	console.log("Kalenderdate: "+date[0]+"."+date[1]+"."+date[2]+ " <-> EasyDate: "+easyDate[0]+"."+easyDate[1]+"."+easyDate[2])
+	
+	if(parseInt(date[0]) == easyDate[0] && parseInt(date[1]) == easyDate[1] && parseInt(date[2]) == easyDate[2]){
+		return true
+	}
+	
+	return false;
+	
+}
+
+function valWhenInput() {
+	$('#cal2').val($('#cal').val());
+	$('#dur2').val($('#dur').val());
+	if($('#cal2').val() != "" && $('#dur2').val() != "") {
+		$('#when').removeClass('alert-error').addClass('alert-info');
+		$('#error-msg').hide();
+	} else {
+		$('#when').removeClass('alert-info').addClass('alert-error');
+		$('#error-msg').show();
+	};
+};
+	
+</script>
+
+	@searchbar(usr) 		 
+		
+	<div class="container-fluid">
+		 		    
+			<div class="modal hide" id="myModal">
+                
+                @helper.form(action = routes.BookingController.createBooking(of.getObjectId().toString()), 'class -> "formee", 'id->"form_rent") {
+		
+				<div class="modal-header">
+					 <button type="button" class="close" data-dismiss="modal">&times;</button>
+				  <h3>Buchungsübersicht</h3>
+				</div>
+				
+				
+
+				<div class="modal-body">
+					<div class="row-fluid">
+						<div class="span7">
+						  
+						 	<div class="alert alert-success" style="background: transparent; color: black">
+							  	<h1>Was?</h1> 
+							  	<h2>@of.getBaseModel().name</h2>
+						 	</div>
+						 </div>
+
+					 	<div class="span5">
+					 		<button class="btn pull-right btn-large btn-success" type="button" data-dismiss="modal">Produkt ansehen</button>
+					 	</div>
+					</div>
+
+					<div class="row-fluid">
+						<div class="span7">
+							<div class="alert alert-info" id="when" style="background: transparent; color: black">
+
+								<table>
+								<tr>
+									<td></td>
+									<td>
+										<h1 style="margin-bottom: 5px">Wann?</h1>
+									</td >
+								</tr>
+								<tr>
+									<td style="text-align: right;">
+										<span style="font-weight: 200;">Ab: </span>
+									</td>
+									<td style="text-align: right;">
+							      		@helper.inputText(bkng("date"), 'style -> "width:120px;", 'id -> "cal2", 'width -> 20, 'readonly -> "readonly")
+							      	</td>
+							      	<td style="text-align: right;">
+										<span style="font-weight: 200;">Dauer (in Tagen): </span>
+									</td>
+							      	<td>
+
+							      		@helper.inputText(bkng("duration"), 'style -> "width: 25px;", 'id -> "dur2", 'maxlength -> 2, 'readonly -> "readonly")
+
+							      	</td>
+							    </tr>
+							    </table>			       	   
+							</div>
+						</div>	
+						<div class="span5">
+					 		<button class="btn pull-right btn-large btn-success" type="button" style="width: 140px;" data-dismiss="modal">Datum Ändern</button>
+					 	</div>
+					</div>
+
+					<div class="row-fluid">
+						<div class="span7">
+							<div class="alert alert-success" style="background: transparent; color: black">
+							  <h1>Wer?</h1>
+							  <h2>Rechnungsadresse</h2>
+							  <span>@usr.getBaseModel().firstname @usr.getBaseModel().lastname</span> <br />
+							  @usr.getBaseModel().street <br />
+							  @usr.getBaseModel().postalcode @usr.getBaseModel().city
+							</div>
+						</div>
+						<div class="span5">
+					 		<button class="btn pull-right btn-large btn-success" type="button" style=" width: 140px;">Daten ändern</button>
+					 	</div>
+					</div>
+
+					<div class="row-fluid">
+						<div class="span7">
+							<div class="alert alert-success" style="background: transparent; color: black">
+							  <h1>Wo?</h1>
+							  <h2>Abholort</h2>
+							  @of.getBaseModel().noStreetNumber(of.getBaseModel().street) <br />
+						@of.getBaseModel().postalCode @of.getBaseModel().city
+							  <!-- <div style="width:350px; height:180px" id="map_canvas3" class="well"> -->
+							  <!-- <img src="http://maps.googleapis.com/maps/api/staticmap?center=40.702147,-74.015794&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&zoom=13&size=300x200&key=AIzaSyCMPoodJdJGDD49qThopBSZrSs5V7kZP0U"></img> -->
+							  <!-- </div> -->
+							</div>
+						</div>
+						<div class="span5">
+					 	</div>
+					</div>		
+						<div class="alert alert-success" style="width: 358px; background: transparent; color: black">
+						  <h1>Wie?</h1>
+						  <h2>Bezahlung</h2> 
+						  <div class="btn-group" data-toggle="buttons-radio">
+							<a href="#" class="btn">Bar</a>
+							<a href="#" class="btn">Paypal</a>
+							<a chref="#" class="btn">Ueberweisung</a>
+						  </div>
+						</div>
+					</div>
+
+
+				  <div class="modal-footer">
+				  	<div id="error-msg" class="alert alert-error" style="width: 358px; text-align: center; text-shadow: 0 0px 0;">
+				  		Kein Datum und/oder Dauer gewählt!
+				  	</div>
+					<a href="#" class="btn" data-dismiss="modal">Abbrechen</a>
+					<a href="#" class="btn btn-primary" onclick="$('#form_rent').submit()">Angebot mieten</a>
+				  </div>
+				}	  
+			</div>
+					
+        <div class="row-fluid">
+		 <div class="span8">
+
+			<div class="well" style="min-height: 200px;">
+				
+				<div class="row-fluid">
+					<div class="span8">
+
+						<h1>@of.getBaseModel().name</h1>
+						<div class="leadStyle" style="text-align: justify; margin-top: 20px;">@of.getBaseModel().description</div>
+
+					</div>
+					
+					<div class="span4">
+	
+						<div id="myCarousel" class="carousel slide">
+							<!-- Carousel items -->
+							<div class="carousel-inner">
+								<div class="active item">
+									<img src="@routes.Assets.at(of.getBaseModel().getImgThumbnailUrl())" alt="">
+								</div>
+<!--								<div class="item">
+									<img src="@routes.Assets.at("img/easteregg/mz.jpg")" alt="">
+								</div>
+								<div class="item">
+									<img src="@routes.Assets.at("img/easteregg/ml.jpg")" alt="">
+								</div>
+								<div class="item">
+									<img src="@routes.Assets.at("img/easteregg/mk.png")" alt="">
+								</div>
+								<div class="item">
+									<img src="@routes.Assets.at("img/easteregg/nvh.jpg")" alt="">
+								</div> -->
+							</div> 
+							<!-- Carousel nav -->
+							<a class="carousel-control left" href="#myCarousel"
+								data-slide="prev">&lsaquo;
+							</a> 
+							<a class="carousel-control right"
+								href="#myCarousel" data-slide="next">&rsaquo;
+							</a>
+
+						</div>
+				   		
+				  	</div>
+
+				</div>
+				  
+			</div>
+
+			
+			<div class="well" id="map_canvas" style="height:320px"></div>
+		
+		</div>
+
+		<div class="span4">
+
+			<div class="well" style="min-height: 200px;">
+				<div class="row-fluid">
+
+					<h2>Mieten</h2>
+					
+					<div id="date" style="background: transparent; color: black" >
+					
+						<table>
+							<tr>
+								<td style="text-align: right;">
+								<span style="font-weight: 200;"></span>
+								</td>
+								<td>
+								<input style="width: 80px" type="text" id="cal" name="startDate" value="" placeholder="Ausleihstart" />
+								</td>
+								<td style="text-align: right">
+								<div class="alert alert-info priceTagNew" style="text-shadow: 0 0px 0;">@CurrencyUtil.getPriceFormatted(of.getBaseModel().priceph) &euro; / Tag</div>
+								
+								</td>
+							</tr>
+							<tr>
+								<td>
+								<span style="font-weight: 200"></span>
+								</td>
+								<td>
+								<input style="width: 80px" type="text" id="dur" name="duration" maxlength="2" placeholder="Tage" onchange="updateTotal()"/>
+								</td>
+								<td style="text-align: right">
+								<div class="alert alert-success priceTagNew" id="total" style="text-shadow: 0 0px 0;">Gesamt: <span id="totalPrice"></span> &euro;</div>
+								
+								</td>
+							</tr>
+						</table>
+						
+						
+					</div>
+
+					<!--  <a class="btn btn-large" href="javascript:history.back(-1)">
+				  		<i class="icon-th"></i>Zur Übersicht
+					</a>-->
+					<a id="rentNowButton" class="btn btn-primary btn-large" data-toggle="modal" href="#myModal" onClick="valWhenInput();">
+					  	<i class="icon-shopping-cart"></i>Jetzt Mieten!
+					</a>
+					
+					<a id="rentNowErrorMsg">
+					  	Artikel im Zeitraum nicht verfügbar!
+					</a>
+
+				</div>
+
+			</div>
+		
+
+			<div class="well" style="min-height: 320px;">
+			  	<p>
+			  		<h3>Anbieter</h3>
+					<h1>@of.getUserMinimumModel().getMinimumModelLabel()</h1>
+			  	</p>
+			  	<ul class="nav nav-list">
+			       			<li class="nav-header">Mehr von @of.getUserMinimumModel().getMinimumModelLabel():</li>
+			       			
+			       			@for(off <- otherOffers) {
+			       			<li> <a href="@routes.OfferController.showOffer(off.getBaseModel().refererId)"> <i class="icon-th-list"></i> @off.getBaseModel().name</a> </li>
+			  				}
+			  	</ul>
+			  	
+			  	<br>
+			  	<ul class="nav nav-list">
+			       			<li class="nav-header">Das könnte dich auch interessieren:</li>
+			       			
+			       			@for(off <- relatedOffers) {
+			       			<li> <a href="@routes.OfferController.showOffer(off.getBaseModel().refererId)"> <i class="icon-th-list"></i> @off.getBaseModel().name</a> </li>
+			  				}
+			  	</ul>
+			</div>
+
+		</div>
+	</div>
+    
+@helper.form(action = routes.OfferController.showOffer(of.getObjectId().toString()), 'class -> "formee", 'id->"availCalChangeDate") {
+  <fieldset style="visibility: hidden; height: 0px">
+	
+  </fieldset>
+}
+
+	<hr>
+
+	@footer()
+
+ </div>
+
+
+}

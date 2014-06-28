@@ -1,0 +1,70 @@
+@(searchForm: Form[forms.OfferSearch], userID: String, offers: List[wrapper.OfferWrapper])
+
+@import helper._
+@import util.db._
+
+@main("Offers") {	
+<script type="text/javascript">
+$(document).ready(function() {
+
+		var myOptions = {
+          center: new google.maps.LatLng(48.14112, 11.576843),
+          zoom: 12,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+  		var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+			
+		// To add the marker to the map, call setMap();
+		@offers.map {offer => (new google.maps.Marker({
+			    position: new google.maps.LatLng(@offer.getBaseModel().loc.y, @offer.getBaseModel().loc.x),
+			    title:'@offer.getBaseModel().name'
+			})).setMap(map);}
+
+	}
+
+);
+</script>
+				
+		@searchbar(UserManager.getActiveUserAsWrapper())
+          
+			
+	<div class="container-fluid">
+                  
+      <div class="row-fluid">
+		<div class="span9">
+			<div class="well" id="map_canvas" style="height:450px"></div>
+		</div>
+
+	   
+         <div class="span2">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header">Kategorien</li>
+              <li><a href="#"><i class="icon-home"></i>Haushalt</a></li>
+              <li><a href="#"><i class="icon-flag"></i>Garten</a></li>
+              <li><a href="#"><i class="icon-certificate"></i>Freizeit</a></li>
+              <li><a href="#"><i class="icon-music"></i>Party</a></li>
+              <li><a href="#"><i class="icon-hdd"></i>Technik</a></li>
+              <li><a href="#"><i class="icon-briefcase"></i>Hobby</a></li>
+              <li><a href="#"><i class="icon-road"></i>Sport</a></li>
+              <li><a href="#"><i class="icon-wrench"></i>Werkzeug</a></li>
+              <li><a href="@routes.OfferController.offersOnMap"><i class="icon-random"></i>They have it!</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+      </div><!--/row-->
+
+
+
+      <hr>
+
+  @footer()
+
+    </div>		
+		   </div>
+		   <br class="clear" />		
+
+
+    
+}

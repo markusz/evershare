@@ -1,0 +1,70 @@
+@(registerForm: Form[forms.Register], uname:String)
+@main("Evershare"){
+	
+		<div class="container">
+			<div class="header">
+			  
+				<img src="@routes.Assets.at("img/Evershare Logo.png")" width="150" alt="Logo" />
+<div class="get-it-buttons">
+				<a href="index.html" class="login-button">ABBRECHEN</a>
+  				
+		  </div>
+			</div>
+			<div class="intro">
+
+        
+			<div class="slider-wrapper theme-default mask-container-large">
+	  		
+            
+           <!-- formee-->
+	        @helper.form(action = routes.UserController.register, args = 'id -> "register_user", 'class ->"formee", 'method -> "POST") {
+  
+
+    <fieldset>
+    	<legend>Neuer Benutzer</legend>
+        <div class="grid-6-12">
+                <label>E-Mail Adresse <em class="formee-req">*</em></label>
+               <input type="text" name="email" placeholder="E-Mail Adresse" />
+        </div>
+        <div class="grid-4-12 clear">
+                <label>Benutzername</label>
+                
+               <input type="text" name="name" placeholder="Benutzername" value="@uname"/>
+        </div>
+        <div class="grid-4-12">
+                <label>Vorname <em class="formee-req">*</em></label>
+               <input type="text" name="firstname" placeholder="Vorname" />
+        </div>
+        <div class="grid-4-12">
+                <label>Nachname <em class="formee-req">*</em></label>
+               <input type="text" name="lastname" placeholder="Nachname" />
+        </div>
+        <div class="grid-6-12 clear">
+                <label>Passwort <em class="formee-req">*</em></label>
+               <input type="password" name="password"  />
+        </div>
+        <div class="grid-6-12">
+                <label>Passwort bestaetigen <em class="formee-req">*</em></label>
+               <input type="password" name="password2"  />
+        </div>
+        <div class="grid-6-12 clear">
+          
+        </div>
+        <div class="grid-6-12">
+               <input class="right" type="submit" title="Create" value="Erstellen" />
+        </div>
+    </fieldset>  
+    
+
+	}
+	<!-- formee-->
+            
+                  </div>
+              </div>
+			
+		@footer()
+			
+		</div>
+	
+		
+}

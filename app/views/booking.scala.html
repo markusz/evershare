@@ -1,0 +1,66 @@
+@(of: wrapper.OfferWrapper, date: String, payment: Integer)
+
+@import util.db._
+
+@main("Evershare") {
+	
+		<div class="container">
+			@searchbar(UserManager.getActiveUserAsWrapper())
+           
+           <div class="slider-wrapper theme-default mask-container-large">
+     
+			    <div class="wrapperbes">
+					     
+					 <div class="bes1">
+					 </div> 
+					 <div class="bes11">
+					 	<hBes>@of.getBaseModel().name</hBes>
+					 </div> 
+			    </div>
+			    
+			     <div class="wrapperbes">
+					     
+					 <div class="bes2">
+					 </div> 
+					 <div class="bes21">
+					 <hBes>@date</hBes>
+					 </div> 
+			    </div>
+			    
+			     <div class="wrapperbes">
+					     
+					 <div class="bes3">
+					 </div> 
+					 <div class="bes31">
+					 </div> 
+			    </div>
+			    
+			     <div class="wrapperbes">
+					     
+					 <div class="bes4">
+					 </div> 
+					 <div class="bes41">
+					 <hZahl>
+					 @if(payment == 1){
+					 	<img src="@routes.Assets.at("img/paypal.png")" alt="">
+					 }
+					 @if(payment == 2){
+					 	<img src="@routes.Assets.at("img/kreditkarten.png")" alt="">
+					 }
+					 @if(payment == 3){
+					 	<img src="@routes.Assets.at("img/bargeld.png")" alt="">
+					 }
+					 </hZahl>
+					 </div> 
+					 <div class="bes42">
+					 @helper.form(routes.BookingController.createBooking(of.getObjectId().toString()), 'class -> "formee", 'method -> "POST") {
+					 	<input type="submit" value="Mieten">
+					 }
+					 </div> 
+			    </div>
+
+		   </div>
+		   @footer()
+		   <br class="clear" />
+           		
+}

@@ -1,0 +1,189 @@
+@(usernameForm: Form[Application.UsernameSelect], loginForm: Form[forms.LogIn], registerForm: Form[forms.Register], facebookLogin: Form[forms.FacebookLogin])
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<title>Evershare</title>
+		 <link rel="stylesheet" type="text/css" href="@routes.Assets.at("css/styles.css")" />
+		 <link rel="stylesheet" type="text/css" href="@routes.Assets.at("css/animate.css")" />
+		  <script src="@routes.Assets.at("js/jquery-1.7.1.min.js")" type="text/javascript"></script>
+       
+		
+			<script type="text/javascript">
+				function View() {
+				  document.getElementById("containerL").style.display = "block";
+				  document.getElementById("stylized").style.display = "none";
+				  document.getElementById("welcome").style.display = "block";
+				 } 
+				 
+				 function Hide() {
+				  document.getElementById("containerL").style.display = "none";
+				  document.getElementById("stylized").style.display = "block";
+				  document.getElementById("welcome").style.display = "none";
+				 }
+			</script>
+				<script type="text/javascript">
+				function Viewreg() {
+				  document.getElementById("containerR").style.display = "block";
+				  document.getElementById("stylized").style.display = "none";
+				 } 
+				 
+				 function Hidereg() {
+				  document.getElementById("containerR").style.display = "none";
+				  document.getElementById("stylized").style.display = "block";
+				 }
+			</script>
+		
+	</head> 
+
+
+	<body>
+
+	@socialpluginsfragment(facebookLogin)
+	
+			<div class="container">
+			<div class="header">	
+			  <img src="@routes.Assets.at("img/Evershare Logo.png")" width="150" alt="Logo" />
+
+              <div class="get-it-buttons">  
+                <img name="fbImage" src="@routes.Assets.at("img/Facebook.png")" width="33" height="32" alt="facebook" onClick="login()" onMouseOver="fbImage.src='@routes.Assets.at("img/Facebook_hover.png")'" onMouseOut="fbImage.src='@routes.Assets.at("img/Facebook.png")'"/>
+                <img name="twitterImage" src="@routes.Assets.at("img/Twitter.png")" width="33" height="33" alt="twitter" onMouseOver="twitterImage.src='@routes.Assets.at("img/Twitter_hover.png")'" onMouseOut="twitterImage.src='@routes.Assets.at("img/Twitter.png")'"/>
+                <img src="@routes.Assets.at("img/Share-This.png")" width="33" height="33" alt="share" />    
+                <a href="#" class="login-button" onClick="View();">LOGIN</a>
+		  	  </div>
+		  </div>
+
+
+   @if(flash.contains("message")) {
+                <H3>
+                    @flash.get("message")
+                </H3>
+            }
+
+			<div class="slider-wrapper theme-default mask-container-large">
+	  		<img src="@routes.Assets.at("img/mapwc.png")" width="960" height="430" alt="map" />
+       
+               <div class="rectangle">
+               
+               <div id="stylized" class="myform" >
+                <form id="form" method="post" action="index.html">
+                <label>Benutzername
+                <span class="small">W&auml;hle einen Namen</span>
+                </label>
+                <input type="text" id="uname" />
+                </form>
+                
+                <a href="#" class="reg-button" onClick="Viewreg(); $('#unamefield').val($('#uname').val())">REGISTRIEREN</a>
+                
+                </div>
+                
+                <div align="center" id="welcome" style="display: none;">
+                <h5>Sch&ouml;n, dass du wieder da bist!</h5>
+                </div>
+    
+              </div>
+              <div class="triangle-l"></div>
+              <div class="triangle-r"></div>
+              
+                 <div id="containerL" style="display: none;">
+		
+		@helper.form(routes.UserController.login, 'class -> "formL", 'method -> "POST") {
+		
+										
+						<labelL for="name">Benutzername:</labelL>
+						
+						<input name="name" type="name">
+						
+						<labelL for="pw">Passwort:</labelL>
+						
+						<p><a href="#">Passwort vergessen?</a>
+						
+						<input name="pw" type="password">
+						
+						<div id="lower">
+						
+						<input type="checkbox" name="rememberme"><label class="check" for="checkbox">Eingeloggt bleiben?</label>
+						
+						<input type="submit" value="Login">
+						<input  type="button" value="Zur&uuml;ck" onClick="Hide();">
+						
+						</div>
+					
+					}
+		
+				</div>
+				
+			    <div id="containerR" style="display: none;">
+		
+				@helper.form(action = routes.UserController.register, args = 'id -> "register_user", 'class ->"formR", 'method -> "POST") {
+  
+					
+						<labelL for="name">Vorname:</labelL>
+						
+						<input type="name" name="firstname" placeholder="Vorname">
+						
+						<labelL for="name">Nachname:</labelL>
+						
+						<input type="name" name="lastname" placeholder="Nachname">
+					
+						<labelL for="name">Benutzername:</labelL>
+						
+						<input id="unamefield" type="name" name="name" placeholder="Benutzername" >
+						
+						<labelL for="name">E-Mail:</labelL>
+						
+						<input type="name" name="email" placeholder="E-Mail Adresse">
+						
+						<labelL for="username">Passwort:</labelL>
+						
+						<input type="password" name="password" >
+																		
+						<div id="lower">
+						
+						<input type="submit" value="Registrieren">
+						<input type="button" value="Zur&uuml;ck" onClick="Hidereg();">
+						
+						</div>
+					
+					}
+		
+				</div>
+           
+          <div class="mask-gloss-large"></div>
+          </div>
+            
+
+				<div class="quote"><!--Start of Quote-->
+					<img src="@routes.Assets.at("img/quotation-mark.png")" alt="quotation mark" class="quotation-mark" />
+					<p>&Uuml;ber Evershare findest Du schnell und g&uuml;nstig Dinge, welche du gerade ben&ouml;tigst. Damit kannst du bares Geld sparen.</p>
+					
+					<p>Melde Dich an und suche noch heute Dinge in deiner Umgebung und miete diese.					</p>
+					<p><strong>Du brauchst oder suchst etwas?</strong></p>
+				</div><!--End of Quote-->
+				
+				<div class="quote"><!--Start of Quote-->
+					<img src="@routes.Assets.at("img/quotation-mark.png")" alt="quotation mark" class="quotation-mark" />
+					<p>&Uuml;ber Evershare kannst du einfach Dinge von dir an Leute in deiner Umgebung vermieten und somit dein Sachen zu Geld machen.</p>
+					
+					<p>Melde Dich an und stelle deine Sachen noch heute bequem und einfach auf Evershare.					</p>
+					<p><strong>Du hast etwas, was Du gerne teilen w&uuml;rdest?</strong></p>
+				</div><!--End of Quote-->
+				
+				
+			
+				<br class="clear" />
+				
+				<hr />
+		
+			
+				@footer()
+				
+					<div class="fb-like" data-href="http://test.evershare.de" data-send="false" data-width="450" data-show-faces="true" data-font="lucida grande"></div>				
+	
+			
+		</div>		
+	
+	</body>
+
+</html>

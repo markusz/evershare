@@ -1,0 +1,76 @@
+# Routes 
+# This file defines all application routes (Higher priority routes first)   
+
+# Home page
+GET     /                          	 controllers.Application.index()  
+GET		/start						 controllers.Application.start()  
+GET		/mapoverview				 controllers.OfferController.offersOnMap()  
+GET     /start/s					 controllers.OfferController.search()  
+GET		/start/:pageId				 controllers.Application.startPaginate(pageId: java.lang.Integer)
+GET		/landing					 controllers.Application.landing()  
+GET     /actions/logmeoff		     controllers.UserController.logout()  
+ 
+GET     /myprofile 	 				 controllers.UserController.myProfile()
+POST    /myprofile					 controllers.UserController.updateProfile()
+POST	/myprofile/avatar			 controllers.UserController.updateProfileImage()
+GET		/myoffers					 controllers.UserController.listMyOffers()
+GET 	/mybookings					 controllers.UserController.listMyBookings() 
+GET		/messenger					 controllers.UserController.showMessenger()  
+GET		/message					 controllers.UserController.newMessage()
+GET		/messenger/:messageId		 controllers.UserController.displayMessage(messageId : String)
+GET		/settings					 controllers.UserController.settingsPage()  
+GET		/offer/new					 controllers.OfferController.createOfferPage()  
+GET     /offer/:offerID				 controllers.OfferController.showOffer(offerID : String)
+GET     /offer/category/:categoryId	 controllers.OfferController.showOfferForCategory(categoryId : String)
+GET		/impressum					 controllers.FooterController.impressum()  
+GET		/werSindWir					 controllers.FooterController.werSindWir()  
+GET		/datenschutz				 controllers.FooterController.datenschutz()  
+GET		/kontakt					 controllers.FooterController.kontakt()  
+GET		/hilfe					 	 controllers.FooterController.hilfe()  
+GET		/channel					 controllers.Application.channel()  
+GET		/fbunlink					 controllers.UserController.fbunlink()
+GET		/dropDB						 controllers.Application.dropDB()
+
+POST    /register                    controllers.Application.registerPage()   
+POST	/fblogin					 controllers.UserController.fblogin()
+POST    /user				         controllers.UserController.register()  
+POST    /actions/logmein		     controllers.UserController.login()  
+
+POST    /offer					     controllers.OfferController.createOffer()  
+POST 	/offer/:offerID/book		 controllers.BookingController.createBooking(offerID : String)
+POST    /messages	 	 			 controllers.MessageController.sendMessage()
+
+#noch anschauen
+#POST    /messenger					 controllers.MessageController.sendMessage(message: String)
+
+# Map static resources from the /public folder to the /assets URL path 
+GET     /assets/*file               controllers.Assets.at(path="/public", file) 
+
+
+# routes for further features  
+#POST	/api/actions/paypal			 controllers.APIController.paypal() 
+
+# routes for REST API  
+GET		/json/offer					controllers.JSONController.getAllOffers() 
+GET		/json/offer/:offerID		controllers.JSONController.getOffer(offerID:String)  
+
+
+
+#################################################################
+
+
+#!!!!!!!auskommentiert, aber später evtl noch von bedeutung!!!!
+#GET     /profile/:userId 	 		 controllers.UserController.profile(userId : String)
+#GET     /profile/map		 		 controllers.UserController.showUserLocation() 
+#GET     /messages/:message 	 		 controllers.MessageController.sendMessage2(message : String)  
+#GET     /changestatus/:message 	 	 controllers.MessageController.changeStatus(message : String)    
+
+# unused
+#GET     /actions/showoffer			 controllers.OfferController.showOffer(id:String)
+#GET     /actions/deleteoffer/:id	 controllers.OfferController.deleteOffer(id:String)
+#GET     /unreadmessages/:userId					 controllers.MessageController.testUnreadMessages(userId : String)
+#GET     /messages/:message 	 		 controllers.MessageController.sendMessage(message : String)
+#GET     /booking					 controllers.BookingController.listBookings()
+#GET     /offer		     			 controllers.OfferController.offers()
+#GET     /user					     controllers.UserController.listUsers()
+#GET     /unreadmessages/:userId  

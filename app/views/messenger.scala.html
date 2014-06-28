@@ -1,0 +1,122 @@
+@(m: wrapper.MessageWrapper, sentMessages : List[minimummodels.MessageMinimumModel], receivedMessages: List[minimummodels.MessageMinimumModel])
+
+@import util.db._ 
+@main("Messenger") {
+ 
+
+<script>
+  function ausblenden(){
+	$('#message1').fadeOut();
+  }
+
+  function einblenden(){
+	alert("Hallo");
+	$('#message2').fadeIn();
+ }
+ </script>
+
+@searchbar(UserManager.getActiveUserAsWrapper())
+
+<div class="container-fluid">
+  <div class="row-fluid">
+	<div class="span12">
+	  <div class= "mwell">
+
+		<h1 style="margin-bottom: 15px"> Deine Nachrichten</h1>
+						
+		<a class="btn btn-success" href='@routes.Application.start'>
+		  <i class="icon-arrow-left"></i><span name="locationfield"> Startseite</span>
+		</a>
+
+		<a class="btn btn-info" href='@routes.UserController.newMessage'>
+		  <i class="icon-pencil"></i><span name="locationfield"> Neue Nachricht</span>
+		</a>
+
+		<hr>
+
+		<div class ="row-fluid"> 
+		  <div class="span3 brr">
+
+			<ul class="nav nav-list">
+			  <li class="nav-header">Inbox</li>
+				 					
+			  @for(message <- receivedMessages) {
+			  <li>
+				<table>
+				  <tr>
+					<td>
+					  <label class= "checkbox">
+					  <a href="@routes.UserController.displayMessage(message.wrapperId)">@message.label</a>
+					  </label>
+					</td>
+					<td>
+					  <i class="icon-chevron-right"></i>
+					</td>
+				  </tr>
+				</table>
+			  </li>
+			  }
+				 					
+			  <li class="nav-header">Outbox</li>
+				 					
+			  @for(message <- sentMessages) {
+			  <li>
+				<table>
+				  <tr>
+					<td>
+					  <label class= "checkbox">
+					  <a href="@routes.UserController.displayMessage(message.wrapperId)">@message.label</a>
+					  </label>
+					</td>
+					<td>
+					  <i class="icon-chevron-right"></i>
+					</td>
+				  </tr>
+				</table>
+			  </li>
+			  }
+			</ul>
+		  </div>
+							
+		  <div class="span8">
+			<div id = "message1">
+			  <table>
+				<tr>
+				  <td>
+					<h3>@if(m != null){ @m.getBaseModel().getTitle() }</h3>
+					<h4>@if(m != null){ @m.sender.label }</h4>
+				  </td>
+				  <td style="padding-left: 50px;">
+					@if(m != null) {
+					<a class="btn btn-info" href='@routes.UserController.newMessage?user=@m.sender.label&subject=Re:@m.getBaseModel().getTitle()'>
+					  <i class="icon-share-alt"></i><span name="newmessage"></span>
+					</a>
+            			
+            		<button class="btn btn-danger" type="button"><i class="icon-remove"></i></button>
+            		}
+				  </td>
+				</tr>
+			  </table>
+
+			  <p style="font-style: italic; margin-top: 10px">@if(m != null) { @m.getBaseModel().getTimestamp() }</p>
+			  <hr style="margin: 10px 0 10px 0">
+			  @if(m != null) {
+				@if(m.sender.label == "Evershare") {
+				  <pre>@m.getBaseModel().getMessage()</pre>
+			    } else {
+			      <p align="justify">@m.getBaseModel().getMessage()</p>
+			    }
+			  }
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+  </div>
+
+  <hr>
+  @footer()
+
+</div>
+<br class="clear" />		    
+}

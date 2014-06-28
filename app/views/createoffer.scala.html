@@ -1,0 +1,160 @@
+@(of: Form[Offer])
+@import util.db._
+
+@main("Evershare"){
+
+            
+            <script type="text/javascript">
+$(document).ready(function() {
+        $('[name=date_from]').datetimepicker({dateFormat: "dd.MM yy",
+                        timeFormat: 'hh:mm',
+                        monthNames: ['Januar','Februar','Maerz','April','Mai','Juni',
+                                        'Juli','August','September','Oktober','November','Dezember'],
+                        stepMinute: 15, 
+                        numberOfMonths: 2
+                });
+        
+        $('[name=date_to]').datetimepicker({dateFormat: "dd.MM yy",
+                timeFormat: 'hh:mm',
+                monthNames: ['Januar','Februar','Maerz','April','Mai','Juni',
+                                        'Juli','August','September','Oktober','November','Dezember'],
+                stepMinute: 15, 
+                numberOfMonths: 2
+        });
+        });
+</script>
+    
+		
+
+	@searchbar(UserManager.getActiveUserAsWrapper())
+	      
+	
+
+    <div class="container-fluid">
+                  <div class="modal hide" id="myModal">
+					  <div class="modal-header">
+					    <button type="button" class="close" data-dismiss="modal">x</button>
+					    <h3>Neues Angebot</h3>
+					  </div>
+					
+				</div>
+      <div class="row-fluid">
+			<div class="span12">
+					@helper.form(action = routes.OfferController.createOffer, args = 'method -> "POST", 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
+
+					<fieldset>
+						<legend><h2>Neues Angebot</h2></legend><p></p><br>
+						<p><h3>Name & Kategorie</h3></p>
+							<div class="control-group">
+							<label class="control-label" for="input1"><i class="icon-search"></i> Name des Angebots</label>
+								<div class="controls">									
+									<input type="text" class="input-xlarge" id="input01" name="name">
+									<p class="help-block">Bitte gib Deinem Angebot einen aussagekraeftigen Namen.</p>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="select01"><i class="icon-th-list"></i> Waehle Kategorie</label>
+								<div class="controls">
+									<select id="catSelect" name="catSelect">
+									 @for(cat <- CategoryManager.getAll()) {
+										<option value="@cat.getObjectId().toString()">@cat.getBaseModel().name</option>
+										}
+									</select>
+									<p class="help-block">In welche Kategorie passt Dein Objekt am besten?</p>
+								</div>
+							</div>
+							<p><h3>Beschreibung & Details</h3></p>
+							<div class="control-group">
+						      <label class="control-label" for="input02"><i class="icon-tag"></i> Marke</label>
+								<div class="controls">
+									<input type="text" class="input-xlarge" id="input01">
+									<p class="help-block">Nenne bitte die Marke des Produkts</p>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="select02"><i class="icon-ok"></i> Zustand	</label>
+								<div class="controls">
+									<select id="select02">
+										<option>nagelneu</option>
+										<option>neuwertig, kaum benutzt</option>
+										<option>benutzt, aber in gutem Zustand</option>
+										<option>stark benutzt, aber funktionstüchtig</option>
+										<option>stark benutzt, funktionstüchtig mit Leistungsschwächen</option>
+									</select>
+									<p class="help-block">Bitte waehle einen Zustand, der am ehersten zutrifft</p>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="textarea"><i class="icon-pencil"></i> Erweiterte Beschreibung</label>
+								<div class="controls">
+									<textarea class="input-xlarge" id="description" rows="5" name="description"></textarea>
+								</div>
+							</div>
+							<div class="control-group">  
+								<label class="control-label" for="fileInput"><i class="icon-picture"></i> Bild 1 auswaehlen</label>  
+								<div class="controls">  
+									<input class="input-file" id="fileInput01" type="file" name="img">  
+								</div>  
+								
+							</div>
+							<div class="control-group">  
+								<label class="control-label" for="fileInput"><i class="icon-picture"></i> Bild 2 auswaehlen</label>  
+								<div class="controls">  
+									<input class="input-file" id="fileInput02" type="file">  
+								</div>  
+							</div>
+							<div class="control-group">  
+								<label class="control-label" for="fileInput"><i class="icon-picture"></i> Bild 3 auswaehlen</label>  
+								<div class="controls">  
+									<input class="input-file" id="fileInput03" type="file">  
+								</div>  
+							</div>
+							
+							<p><h3>Adresse</h3></p>
+							
+							<div class="control-group">  
+								<label class="control-label" for="streetInput"><i class="icon-road"></i> Strasse</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="streetInput" type="text" name="street">  
+								</div>  
+							</div>
+							
+							<div class="control-group">  
+								<label class="control-label" for="cityInput"><i class="icon-globe"></i> Angebotsort</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="cityInput" type="text" name="city">  
+								</div>  
+							</div>
+							
+							<div class="control-group">  
+								<label class="control-label" for="plzInput"><i class="icon-home"></i> Postleitzahl</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="plzInput" type="text" name="postalCode">  
+								</div>  
+							</div>
+							
+							<div class="control-group">  
+								<label class="control-label" for="priceInput"><i class="icon-star"></i> Preis pro Stunde</label>  
+								<div class="controls">  
+									<input class="input-xlarge" id="priceInput" type="text" name="priceph">  
+								</div>  
+							</div>
+							
+							<a class="btn" href="javascript:history.back(-1)"> Abbrechen </a>
+							<a onclick="$(this).parents('form').submit();" class="btn btn-primary"> Angebot einstellen </a>
+							
+					</fieldset>
+				}
+			</div><!--/span-->
+			
+
+      </div><!--/row-->
+
+      <hr>
+
+  @footer()
+
+    </div><!--/.fluid-container-->	
+	
+		
+}	

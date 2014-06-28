@@ -1,0 +1,6 @@
+# Categories
+
+categories:
+
+- !!models.Category
+name: Spielzeug

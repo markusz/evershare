@@ -1,0 +1,21 @@
+@import util.db._
+
+<div class="header">
+				<div class='cssmenu'>
+				<a href='@routes.Application.start'><img src="@routes.Assets.at("img/Evershare Logo.png")" width="150" alt="Logo" /></a>	
+							
+						 <ul>
+					
+						   <li class='active '><a href='#'><span>@UserManager.getActiveUserAsWrapper()</span></a>
+						      <ul>
+						       <li><a href='@routes.UserController.settingsPage'><span>Einstellungen</span></a></li>
+						      	 <li><a href="@routes.OfferController.createOfferPage"><span>Neues Angebot</span></a></li>
+						         <li><a href='@routes.UserController.myProfile'><span>Meine Angebote</span></a></li> 
+						         <li><a href='#'><span>Meine Buchungen</span></a></li> 
+						         <li><a href="@routes.UserController.logout"><span>Logout</span></a></li>
+						      </ul>
+						   </li>
+						</ul>
+					</div>  
+     
+			</div>

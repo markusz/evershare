@@ -1,0 +1,30 @@
+@import util.db._
+
+<div class="span2">
+  <sidebar>
+	<div class="well sidebar-nav">
+	  <ul class="nav nav-list">
+		<li class="nav-header">Kategorien</li>
+		<li><a href='@routes.OfferController.showOfferForCategory(CategoryManager.getCategoryByName("Heimwerk").getObjectId().toString())'>
+			<i class="icon-home"></i>@CategoryManager.getCategoryByName("Heimwerk").getBaseModel().name</a></li>
+		<li><a href='@routes.OfferController.showOfferForCategory(CategoryManager.getCategoryByName("Party").getObjectId().toString())'>
+			<i class="icon-music"></i>@CategoryManager.getCategoryByName("Party").getBaseModel().name</a></li>
+		<li><a href='@routes.OfferController.showOfferForCategory(CategoryManager.getCategoryByName("Freizeit").getObjectId().toString())'>
+			<i class="icon-asterisk"></i>@CategoryManager.getCategoryByName("Freizeit").getBaseModel().name</a></li>
+		<li><a href='@routes.OfferController.showOfferForCategory(CategoryManager.getCategoryByName("Garten").getObjectId().toString())'>
+			<i class="icon-flag"></i>@CategoryManager.getCategoryByName("Garten").getBaseModel().name</a></li>
+		<li><a href='@routes.OfferController.showOfferForCategory(CategoryManager.getCategoryByName("Haushalt").getObjectId().toString())'>
+			<i class="icon-hdd"></i>@CategoryManager.getCategoryByName("Haushalt").getBaseModel().name</a></li>
+		<li><a href='@routes.OfferController.showOfferForCategory(CategoryManager.getCategoryByName("Werkzeug").getObjectId().toString())'>
+			<i class="icon-camera"></i>@CategoryManager.getCategoryByName("Werkzeug").getBaseModel().name</a></li>
+		
+		<li><a href='@routes.OfferController.showOfferForCategory(CategoryManager.getCategoryByName("Sport").getObjectId().toString())'>
+			<i class="icon-road"></i>@CategoryManager.getCategoryByName("Sport").getBaseModel().name</a></li>
+		<li><a href='@routes.OfferController.showOfferForCategory(CategoryManager.getCategoryByName("Auto").getObjectId().toString())'>
+			<i class="icon-wrench"></i>@CategoryManager.getCategoryByName("Auto").getBaseModel().name</a></li>
+		<li><a href="@routes.OfferController.offersOnMap">
+			<i class="icon-globe"></i>Map</a></li>
+	  </ul>
+	</div>
+  </sidebar>
+</div>
